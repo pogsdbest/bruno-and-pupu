@@ -90,7 +90,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2809830fb14514944927433e1ac93bea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  id: 0
   BackTexture: {fileID: 1312790259, guid: 745e0051cc63ae74984a792dca6bb622, type: 3}
   FrontTexture: {fileID: 973376331, guid: 745e0051cc63ae74984a792dca6bb622, type: 3}
   IsFlipping: 0
@@ -143,7 +142,7 @@ MonoBehaviour:
       - m_Target: {fileID: 9055218491494723461}
         m_TargetAssemblyTypeName: Card, Assembly-CSharp
         m_MethodName: Flip
-        m_Mode: 6
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine

@@ -1,25 +1,39 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 using static UnityEngine.RuleTile.TilingRuleOutput;
 
 public class Card : MonoBehaviour
 {
-    public int id;
     public Sprite BackTexture;
     public Sprite FrontTexture;
     public bool IsFlipping;
     public float Speed;
 
     private Image Image;
+    private bool Rotated;
     public bool IsFaceUp;
+
+    public static event Action<Card> OnCardSelected;
 
     private void Awake()
     {
         Image = GetComponent<Image>();
         IsFaceUp = false;
+        Rotated = false;
     }
 
-    public void Flip(bool faceup)
+    public void Flip()
+    {
+        if (IsFlipping || IsFaceUp)
+        {
+            return;
+        }
+        IsFlipping = true;
+        OnCardSelected?.Invoke(this);
+    }
+
+    public void FaceDown()
     {
         IsFlipping = true;
     }
@@ -28,21 +42,32 @@ public class Card : MonoBehaviour
     {
         if (IsFlipping)
         {
-            Quaternion currentRotation = transform.rotation;
-            Quaternion wantedRotation = Quaternion.Euler(0, 180, 0);
-            transform.rotation = Quaternion.RotateTowards(currentRotation, wantedRotation, Speed);
-
-            if (currentRotation.eulerAngles.y < 270 && currentRotation.eulerAngles.y > 180
-                || currentRotation.eulerAngles.y > 90 && currentRotation.eulerAngles.y < 180)
+            if(!Rotated)
             {
-                Image.sprite = IsFaceUp ? BackTexture : FrontTexture;
+                DoRotation(Quaternion.Euler(0, 90, 0));
+                if (transform.rotation.eulerAngles.y >= 90)
+                {
+                    Rotated = true;
+                    Image.sprite = IsFaceUp ? BackTexture : FrontTexture;
+                }
             }
-            if (currentRotation == wantedRotation)
+            else
             {
-                IsFaceUp = IsFaceUp ? false : true;
-                transform.rotation = Quaternion.Euler(0, 0, 0);
-                IsFlipping = false;
+                DoRotation(Quaternion.Euler(0, 0, 0));
+                if (transform.rotation.eulerAngles.y <= 0)
+                {
+                    Rotated = false;
+                    IsFlipping=false;
+                    IsFaceUp = IsFaceUp ? false : true;
+                }
             }
+            
         }
+    }
+
+    private void DoRotation(Quaternion wantedRotation)
+    {
+        Quaternion currentRotation = transform.rotation;
+        transform.rotation = Quaternion.RotateTowards(currentRotation, wantedRotation, Speed);
     }
 }
