@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,14 +13,64 @@ public class CardOrganizer : MonoBehaviour
 
     public List<Card> cards = new List<Card>();
 
+    public static event Action<SaveWrapper> OnSaveGame;
+
     private void Awake()
     {
         CardMatchGamePlayManager.OnSetupCards += SetupCards;
+        CardMatchGamePlayManager.OnLoadCards += LoadCards;
+        CardMatchGamePlayManager.OnCardMatched += CardMatched;
     }
 
     private void OnDestroy()
     {
         CardMatchGamePlayManager.OnSetupCards -= SetupCards;
+        CardMatchGamePlayManager.OnLoadCards -= LoadCards;
+        CardMatchGamePlayManager.OnCardMatched -= CardMatched;
+    }
+
+    private void LoadCards(SaveWrapper save)
+    {
+        this._column = save.col;
+        this._row = save.row;
+
+        foreach(var cardData in save.cards)
+        {
+            var card = CreateCard(cardData.ID);
+            if(cardData.IsFaceUp)
+            {
+                card.LoadedFaceUp = true;
+            }
+        }
+
+        AddCardsToPanel();
+
+        ScaleBasedOnTargetArea();
+    }
+
+    private void CardMatched()
+    {
+        SaveWrapper save = new()
+        {
+            col = _column,
+            row = _row,
+            cards = GetData(cards)
+        };
+        OnSaveGame?.Invoke(save);
+    }
+    private List<CardData> GetData(List<Card> cards)
+    {
+        var cardData = new List<CardData>();
+        foreach (var card in cards)
+        {
+            CardData data = new()
+            {
+                ID = card.ID,
+                IsFaceUp = card.IsFaceUp
+            };
+            cardData.Add(data);
+        }
+        return cardData;
     }
 
     private void SetupCards(int column, int row)
@@ -30,16 +81,15 @@ public class CardOrganizer : MonoBehaviour
         Debug.Log("setting up cards");
 
         var totalCards = column * row;
-        var spriteLoader = GetComponent<SpriteLoader>();
 
         for(int i = 0; i < totalCards/2; i++)
         {
-            var randomSprite = spriteLoader.SpriteList[ Random.Range(0, spriteLoader.SpriteList.Count)];
+            var id = UnityEngine.Random.Range(0, GetComponent<SpriteLoader>().SpriteList.Count);
 
             //First Card
-            CreateCard(randomSprite);
+            CreateCard(id);
             //Pair
-            CreateCard(randomSprite);
+            CreateCard(id);
         }
 
         Shuffle(cards);
@@ -48,21 +98,23 @@ public class CardOrganizer : MonoBehaviour
         ScaleBasedOnTargetArea();
     }
 
-    private void CreateCard(Sprite sprite)
+    private Card CreateCard(int id)
     {
         GameObject cardObject = Instantiate(CardPrefab, transform.position, CardPrefab.transform.rotation);
         Card card = cardObject.GetComponent<Card>();
-        card.FrontTexture = sprite;
-        cardObject.name = sprite.name;
+        card.ID = id;
+        card.FrontTexture = GetComponent<SpriteLoader>().GetSprite(id);
+        cardObject.name = card.FrontTexture.name;
 
         cards.Add(card);
+        return card;
     }
 
     private void Shuffle<T>(List<T> list)
     {
         for (int i = list.Count - 1; i > 0; i--)
         {
-            int randomIndex = Random.Range(0, i + 1);
+            int randomIndex = UnityEngine.Random.Range(0, i + 1);
             T temp = list[i];
             list[i] = list[randomIndex];
             list[randomIndex] = temp;

@@ -5,6 +5,7 @@ using static UnityEngine.RuleTile.TilingRuleOutput;
 
 public class Card : MonoBehaviour
 {
+    public int ID;
     public Sprite BackTexture;
     public Sprite FrontTexture;
     public bool IsFlipping;
@@ -13,6 +14,7 @@ public class Card : MonoBehaviour
     private Image Image;
     private bool Rotated;
     public bool IsFaceUp;
+    public bool LoadedFaceUp;
 
     public static event Action<Card> OnCardSelected;
 
@@ -21,6 +23,15 @@ public class Card : MonoBehaviour
         Image = GetComponent<Image>();
         IsFaceUp = false;
         Rotated = false;
+    }
+
+    public void Start()
+    {
+        if ( LoadedFaceUp)
+        {
+            IsFaceUp = true;
+            Image.sprite = FrontTexture;
+        }
     }
 
     public void Flip()
