@@ -23,4 +23,9 @@ public class SpriteLoader : MonoBehaviour
                 
         }
     }
+
+    public Sprite GetSprite(int id)
+    {
+        return SpriteList[id];
+    }
 }
