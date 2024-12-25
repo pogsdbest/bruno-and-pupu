@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1082131976052320989}
   - component: {fileID: 303436867}
   - component: {fileID: 303436868}
+  - component: {fileID: 2068213666}
   m_Layer: 5
   m_Name: CardPanel
   m_TagString: Untagged
@@ -114,18 +115,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e412f322c136d1a40a5b430ae9c04752, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  column: 3
-  row: 3
-  cards:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  CardPrefab: {fileID: 2658972572463232681, guid: 9d21ddd03c4437846b9bd06f262ef837, type: 3}
+  cards: []
+--- !u!114 &2068213666
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1082131976052320931}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d26c41b38fd78b4b916c1fd40a1a1a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Texture: {fileID: 2800000, guid: 745e0051cc63ae74984a792dca6bb622, type: 3}
+  SpriteList: []
 --- !u!1 &1082131976092408696
 GameObject:
   m_ObjectHideFlags: 0

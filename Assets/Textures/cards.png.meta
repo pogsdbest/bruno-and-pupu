@@ -882,7 +882,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: BACK1
+      name: -BACK1
       rect:
         serializedVersion: 2
         x: 720
@@ -903,7 +903,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: BACK2
+      name: '-'
       rect:
         serializedVersion: 2
         x: 901
@@ -924,10 +924,10 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: EMPTY
+      name: --
       rect:
         serializedVersion: 2
-        x: 1080
+        x: 1077
         y: 1004
         width: 175
         height: 261
@@ -1092,10 +1092,10 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: BLANK
+      name: ---
       rect:
         serializedVersion: 2
-        x: 1260
+        x: 1263
         y: 743
         width: 176
         height: 261
@@ -1291,6 +1291,10 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
+      '-': 486536480
+      --: 973376331
+      ---: -1772157872
+      -BACK1: 1312790259
       10C: 210848610
       10D: -1624442903
       10H: 1072981768
@@ -1331,10 +1335,6 @@ TextureImporter:
       AD: 1203917584
       AH: 215970331
       AS: -1819472050
-      BACK1: 1312790259
-      BACK2: 486536480
-      BLANK: -1772157872
-      EMPTY: 973376331
       JC: 1851694863
       JD: -1520244893
       JH: -1192111694
