@@ -90,11 +90,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2809830fb14514944927433e1ac93bea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ID: 0
   BackTexture: {fileID: 1312790259, guid: 745e0051cc63ae74984a792dca6bb622, type: 3}
   FrontTexture: {fileID: 973376331, guid: 745e0051cc63ae74984a792dca6bb622, type: 3}
   IsFlipping: 0
   Speed: 10
   IsFaceUp: 0
+  LoadedFaceUp: 0
+  FlipSound: {fileID: 8300000, guid: c1064780b1b37324c977b50a7ea5a803, type: 3}
 --- !u!114 &131643847
 MonoBehaviour:
   m_ObjectHideFlags: 0
