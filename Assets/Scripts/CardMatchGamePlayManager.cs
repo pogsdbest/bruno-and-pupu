@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class CardMatchGamePlayManager : MonoBehaviour
 {
+    public const string STARTING_MESSAGE = "product of column and row must be multiples of 2. eg. 2x2, 2x3, 5x6 etc";
+    public const string ENDING_MESSAGE = "Congratulations!! Game Ended try again?";
+
     public int Column = 2;
     public int Row = 2;
 
@@ -24,52 +27,60 @@ public class CardMatchGamePlayManager : MonoBehaviour
     public static event Action<SaveWrapper> OnLoadCards;
     public static event Action OnUpdateSaveFile;
     public static event Action<int,int,int,int> OnUpdateInfoDisplay;
+    public static event Action<string, bool> OnShowMenu;
 
     private void Awake()
     {
         _cardPair = null;
         Card.OnCardSelected += CardSelected;
         CardOrganizer.OnSaveGame += SaveGame;
+        GameMenu.OnStartGame += StartGame;
+        GameMenu.OnLoadGame += LoadGame;
     }
 
     private void OnDestroy()
     {
         Card.OnCardSelected -= CardSelected;
         CardOrganizer.OnSaveGame -= SaveGame;
+        GameMenu.OnStartGame -= StartGame;
+        GameMenu.OnLoadGame -= LoadGame;
     }
 
     private void Restart()
+    {
+        ResetInfo();
+        UpdateRemainingPairs();
+        OnUpdateInfoDisplay?.Invoke(Matches, Turns, Score, Combo);
+        SetupCards();
+    }
+
+    private void ResetInfo()
     {
         Matches = 0;
         Turns = 0;
         Score = 0;
         Combo = 0;
-        UpdateRemainingPairs();
-        OnUpdateInfoDisplay?.Invoke(Matches, Turns, Score, Combo);
-        SetupCards();
     }
 
     public void Start()
     {
         if (GetComponent<SaveLoadManager>().CheckSaveFile())
         {
-            GetComponent<SaveLoadManager>().LoadSaveFile( (saveFile) =>
-            {
-                Column = saveFile.Col;
-                Row = saveFile.Row;
-                Matches = saveFile.Matches;
-                Turns = saveFile.Turns;
-                Score = saveFile.Score;
-                Combo = saveFile.Combo;
-                UpdateRemainingPairs();
-                OnUpdateInfoDisplay?.Invoke(Matches, Turns, Score, Combo);
-                OnLoadCards(saveFile);
-            });
+            OnShowMenu?.Invoke(STARTING_MESSAGE, true);
         }
         else
         {
-            SetupCards();
+            OnShowMenu?.Invoke(STARTING_MESSAGE, false);
         }
+    }
+
+    private void StartGame(int column, int row)
+    {
+        this.Column = column;
+        this.Row = row;
+        ResetInfo();
+        OnUpdateInfoDisplay?.Invoke(Matches, Turns, Score, Combo);
+        SetupCards();
     }
 
     public void SaveGame(SaveWrapper save)
@@ -79,6 +90,22 @@ public class CardMatchGamePlayManager : MonoBehaviour
         save.Score = Score;
         save.Combo = Combo;
         StartCoroutine(GetComponent<SaveLoadManager>().SaveGameAsync(save));
+    }
+
+    public void LoadGame()
+    {
+        GetComponent<SaveLoadManager>().LoadSaveFile((saveFile) =>
+        {
+            Column = saveFile.Col;
+            Row = saveFile.Row;
+            Matches = saveFile.Matches;
+            Turns = saveFile.Turns;
+            Score = saveFile.Score;
+            Combo = saveFile.Combo;
+            UpdateRemainingPairs();
+            OnUpdateInfoDisplay?.Invoke(Matches, Turns, Score, Combo);
+            OnLoadCards(saveFile);
+        });
     }
 
     public void SetupCards()
@@ -152,7 +179,8 @@ public class CardMatchGamePlayManager : MonoBehaviour
     {
         if (_remainingPairs <= 0)
         {
-            Restart();
+            //Restart();
+            OnShowMenu?.Invoke(ENDING_MESSAGE, false);
         }
     }
 }

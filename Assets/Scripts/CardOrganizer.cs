@@ -34,7 +34,10 @@ public class CardOrganizer : MonoBehaviour
         this._column = save.Col;
         this._row = save.Row;
 
-        foreach(var cardData in save.Cards)
+        ClearAllChildren();
+        cards.Clear();
+
+        foreach (var cardData in save.Cards)
         {
             var card = CreateCard(cardData.ID);
             if(cardData.IsFaceUp)
