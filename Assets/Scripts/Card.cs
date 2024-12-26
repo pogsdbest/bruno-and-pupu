@@ -18,6 +18,8 @@ public class Card : MonoBehaviour
 
     public static event Action<Card> OnCardSelected;
 
+    public AudioClip FlipSound;
+
     private void Awake()
     {
         Image = GetComponent<Image>();
@@ -42,6 +44,7 @@ public class Card : MonoBehaviour
         }
         IsFlipping = true;
         OnCardSelected?.Invoke(this);
+        AudioManager.Instance.PlaySFX(FlipSound);
     }
 
     public void FaceDown()

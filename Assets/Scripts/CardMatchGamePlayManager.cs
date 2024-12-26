@@ -29,6 +29,10 @@ public class CardMatchGamePlayManager : MonoBehaviour
     public static event Action<int,int,int,int> OnUpdateInfoDisplay;
     public static event Action<string, bool> OnShowMenu;
 
+    public AudioClip MatchedSound;
+    public AudioClip MismatchedSound;
+    public AudioClip GameOverSound;
+
     private void Awake()
     {
         _cardPair = null;
@@ -147,23 +151,11 @@ public class CardMatchGamePlayManager : MonoBehaviour
         }
         if(pair.card1.name.Equals(pair.card2.name))
         {
-            Matches += 1;
-            Turns += 1;
-            Score += ScoreReward + (ScoreReward * Combo);
-            Combo += 1;
-
-            OnUpdateInfoDisplay?.Invoke(Matches, Turns, Score, Combo);
-            OnUpdateSaveFile?.Invoke();
+            CardMatched();
         }
         else
         {
-            Turns += 1;
-            Combo = 0;
-
-            pair.card1.FaceDown();
-            pair.card2.FaceDown();
-
-            OnUpdateInfoDisplay?.Invoke(Matches, Turns, Score, Combo);
+            CardMismatched(pair);
         }
         _pairs.Remove(pair);
         UpdateRemainingPairs();
@@ -175,11 +167,36 @@ public class CardMatchGamePlayManager : MonoBehaviour
         _remainingPairs = ((Column * Row) / 2) - Matches;
     }
 
+    private void CardMatched()
+    {
+        Matches += 1;
+        Turns += 1;
+        Score += ScoreReward + (ScoreReward * Combo);
+        Combo += 1;
+
+        OnUpdateInfoDisplay?.Invoke(Matches, Turns, Score, Combo);
+        OnUpdateSaveFile?.Invoke();
+        AudioManager.Instance.PlayMusic(MatchedSound);
+    }
+
+    private void CardMismatched(CardPair pair)
+    {
+        Turns += 1;
+        Combo = 0;
+
+        pair.card1.FaceDown();
+        pair.card2.FaceDown();
+
+        OnUpdateInfoDisplay?.Invoke(Matches, Turns, Score, Combo);
+        AudioManager.Instance.PlayMusic(MismatchedSound);
+    }
+
     private void CheckRemainingPairs()
     {
         if (_remainingPairs <= 0)
         {
             //Restart();
+            AudioManager.Instance.PlayMusic(GameOverSound);
             OnShowMenu?.Invoke(ENDING_MESSAGE, false);
         }
     }
