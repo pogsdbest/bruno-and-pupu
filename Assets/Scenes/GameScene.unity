@@ -220,15 +220,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15908af126362bb40a6670e189607dbf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  column: 4
-  row: 4
+  Column: 4
+  Row: 4
   ScoreReward: 100
   Matches: 0
   Turns: 0
   Score: 0
   Combo: 0
-  HasSave: 0
-  pairs: []
 --- !u!4 &659462994
 Transform:
   m_ObjectHideFlags: 0
