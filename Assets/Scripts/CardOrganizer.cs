@@ -19,14 +19,14 @@ public class CardOrganizer : MonoBehaviour
     {
         CardMatchGamePlayManager.OnSetupCards += SetupCards;
         CardMatchGamePlayManager.OnLoadCards += LoadCards;
-        CardMatchGamePlayManager.OnCardMatched += CardMatched;
+        CardMatchGamePlayManager.OnUpdateSaveFile += UpdateSaveFile;
     }
 
     private void OnDestroy()
     {
         CardMatchGamePlayManager.OnSetupCards -= SetupCards;
         CardMatchGamePlayManager.OnLoadCards -= LoadCards;
-        CardMatchGamePlayManager.OnCardMatched -= CardMatched;
+        CardMatchGamePlayManager.OnUpdateSaveFile -= UpdateSaveFile;
     }
 
     private void LoadCards(SaveWrapper save)
@@ -48,7 +48,7 @@ public class CardOrganizer : MonoBehaviour
         ScaleBasedOnTargetArea();
     }
 
-    private void CardMatched()
+    private void UpdateSaveFile()
     {
         SaveWrapper save = new()
         {
@@ -58,6 +58,7 @@ public class CardOrganizer : MonoBehaviour
         };
         OnSaveGame?.Invoke(save);
     }
+
     private List<CardData> GetData(List<Card> cards)
     {
         var cardData = new List<CardData>();
@@ -78,7 +79,8 @@ public class CardOrganizer : MonoBehaviour
         this._column = column;
         this._row = row;
 
-        Debug.Log("setting up cards");
+        ClearAllChildren();
+        cards.Clear();
 
         var totalCards = column * row;
 
@@ -96,6 +98,7 @@ public class CardOrganizer : MonoBehaviour
         AddCardsToPanel();
 
         ScaleBasedOnTargetArea();
+        UpdateSaveFile();
     }
 
     private Card CreateCard(int id)
@@ -126,6 +129,14 @@ public class CardOrganizer : MonoBehaviour
         foreach(var card in cards)
         {
             card.gameObject.transform.SetParent(gameObject.transform, false);
+        }
+    }
+
+    public void ClearAllChildren()
+    {
+        for (int i = transform.childCount - 1; i >= 0; i--)
+        {
+            Destroy(transform.GetChild(i).gameObject);
         }
     }
 

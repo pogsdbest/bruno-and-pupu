@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class CardMatchGamePlayManager : MonoBehaviour
 {
-    public int column = 2;
-    public int row = 2;
+    public int Column = 2;
+    public int Row = 2;
 
     public int ScoreReward;
 
@@ -15,12 +15,14 @@ public class CardMatchGamePlayManager : MonoBehaviour
     public int Score;
     public int Combo;
 
+    private int _remainingPairs;
+
     private CardPair _cardPair;
-    public List<CardPair> pairs = new List<CardPair>();
+    private List<CardPair> _pairs = new List<CardPair>();
 
     public static event Action<int,int> OnSetupCards;
     public static event Action<SaveWrapper> OnLoadCards;
-    public static event Action OnCardMatched;
+    public static event Action OnUpdateSaveFile;
     public static event Action<int,int,int,int> OnUpdateInfoDisplay;
 
     private void Awake()
@@ -36,16 +38,30 @@ public class CardMatchGamePlayManager : MonoBehaviour
         CardOrganizer.OnSaveGame -= SaveGame;
     }
 
+    private void Restart()
+    {
+        Matches = 0;
+        Turns = 0;
+        Score = 0;
+        Combo = 0;
+        UpdateRemainingPairs();
+        OnUpdateInfoDisplay?.Invoke(Matches, Turns, Score, Combo);
+        SetupCards();
+    }
+
     public void Start()
     {
         if (GetComponent<SaveLoadManager>().CheckSaveFile())
         {
             GetComponent<SaveLoadManager>().LoadSaveFile( (saveFile) =>
             {
+                Column = saveFile.Col;
+                Row = saveFile.Row;
                 Matches = saveFile.Matches;
                 Turns = saveFile.Turns;
                 Score = saveFile.Score;
                 Combo = saveFile.Combo;
+                UpdateRemainingPairs();
                 OnUpdateInfoDisplay?.Invoke(Matches, Turns, Score, Combo);
                 OnLoadCards(saveFile);
             });
@@ -67,7 +83,7 @@ public class CardMatchGamePlayManager : MonoBehaviour
 
     public void SetupCards()
     {
-        OnSetupCards?.Invoke(column, row);
+        OnSetupCards?.Invoke(Column, Row);
     }
 
     private void CardSelected(Card card)
@@ -87,7 +103,7 @@ public class CardMatchGamePlayManager : MonoBehaviour
             else
             {
                 _cardPair.card2 = card;
-                pairs.Add(_cardPair);
+                _pairs.Add(_cardPair);
                 StartCoroutine(CheckCardPair(_cardPair));
                 _cardPair = new CardPair();
                 
@@ -110,7 +126,7 @@ public class CardMatchGamePlayManager : MonoBehaviour
             Combo += 1;
 
             OnUpdateInfoDisplay?.Invoke(Matches, Turns, Score, Combo);
-            OnCardMatched?.Invoke();
+            OnUpdateSaveFile?.Invoke();
         }
         else
         {
@@ -122,6 +138,21 @@ public class CardMatchGamePlayManager : MonoBehaviour
 
             OnUpdateInfoDisplay?.Invoke(Matches, Turns, Score, Combo);
         }
-        pairs.Remove(pair);
+        _pairs.Remove(pair);
+        UpdateRemainingPairs();
+        CheckRemainingPairs();
+    }
+
+    private void UpdateRemainingPairs()
+    {
+        _remainingPairs = ((Column * Row) / 2) - Matches;
+    }
+
+    private void CheckRemainingPairs()
+    {
+        if (_remainingPairs <= 0)
+        {
+            Restart();
+        }
     }
 }
