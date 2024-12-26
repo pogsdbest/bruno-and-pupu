@@ -12,17 +12,7 @@ public class SaveLoadManager : MonoBehaviour
     private void Awake()
     {
         _savePath = Application.persistentDataPath + "/save.json";
-        CardOrganizer.OnSaveGame += SaveGame;
-    }
-
-    private void OnDestroy()
-    {
-        CardOrganizer.OnSaveGame -= SaveGame;
-    }
-
-    private void SaveGame(SaveWrapper save)
-    {
-        StartCoroutine(SaveGameAsync(save));
+        
     }
 
     public bool CheckSaveFile()

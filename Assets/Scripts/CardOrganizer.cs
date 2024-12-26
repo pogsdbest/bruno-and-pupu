@@ -31,10 +31,10 @@ public class CardOrganizer : MonoBehaviour
 
     private void LoadCards(SaveWrapper save)
     {
-        this._column = save.col;
-        this._row = save.row;
+        this._column = save.Col;
+        this._row = save.Row;
 
-        foreach(var cardData in save.cards)
+        foreach(var cardData in save.Cards)
         {
             var card = CreateCard(cardData.ID);
             if(cardData.IsFaceUp)
@@ -52,9 +52,9 @@ public class CardOrganizer : MonoBehaviour
     {
         SaveWrapper save = new()
         {
-            col = _column,
-            row = _row,
-            cards = GetData(cards)
+            Col = _column,
+            Row = _row,
+            Cards = GetData(cards)
         };
         OnSaveGame?.Invoke(save);
     }
