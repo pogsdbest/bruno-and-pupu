@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 
 public class SpriteLoader : MonoBehaviour
@@ -9,18 +8,12 @@ public class SpriteLoader : MonoBehaviour
 
     void Awake()
     {
-        string texturePath = AssetDatabase.GetAssetPath(Texture);
-        Object[] sprites = AssetDatabase.LoadAllAssetsAtPath(texturePath);
+        Sprite[] sprites = Resources.LoadAll<Sprite>("CardsTexture");
 
         foreach (var sprite in sprites)
         {
-            if(sprite is Sprite)
-            {
-                if (sprite.name.StartsWith('-')) continue;
-
-                SpriteList.Add((sprite as Sprite));
-            }
-                
+            if (sprite.name.StartsWith("-")) continue;
+            SpriteList.Add(sprite);
         }
     }
 
