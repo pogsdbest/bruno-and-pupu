@@ -222,6 +222,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   column: 4
   row: 4
+  ScoreReward: 100
+  Matches: 0
+  Turns: 0
+  Score: 0
+  Combo: 0
   HasSave: 0
   pairs: []
 --- !u!4 &659462994

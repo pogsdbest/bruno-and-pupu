@@ -8,6 +8,13 @@ public class CardMatchGamePlayManager : MonoBehaviour
     public int column = 2;
     public int row = 2;
 
+    public int ScoreReward;
+
+    public int Matches;
+    public int Turns;
+    public int Score;
+    public int Combo;
+
     public bool HasSave = false;
 
     private CardPair _cardPair;
@@ -16,6 +23,7 @@ public class CardMatchGamePlayManager : MonoBehaviour
     public static event Action<int,int> OnSetupCards;
     public static event Action<SaveWrapper> OnLoadCards;
     public static event Action OnCardMatched;
+    public static event Action<int,int,int,int> OnUpdateInfoDisplay;
 
     private void Awake()
     {
@@ -83,14 +91,23 @@ public class CardMatchGamePlayManager : MonoBehaviour
         }
         if(pair.card1.name.Equals(pair.card2.name))
         {
-            //score
+            Matches += 1;
+            Turns += 1;
+            Score += ScoreReward + (ScoreReward * Combo);
+            Combo += 1;
 
+            OnUpdateInfoDisplay?.Invoke(Matches, Turns, Score, Combo);
             OnCardMatched?.Invoke();
         }
         else
         {
+            Turns += 1;
+            Combo = 0;
+
             pair.card1.FaceDown();
             pair.card2.FaceDown();
+
+            OnUpdateInfoDisplay?.Invoke(Matches, Turns, Score, Combo);
         }
         pairs.Remove(pair);
     }
