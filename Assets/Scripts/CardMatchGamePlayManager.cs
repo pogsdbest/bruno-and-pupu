@@ -15,8 +15,6 @@ public class CardMatchGamePlayManager : MonoBehaviour
     public int Score;
     public int Combo;
 
-    public bool HasSave = false;
-
     private CardPair _cardPair;
     public List<CardPair> pairs = new List<CardPair>();
 
@@ -28,21 +26,27 @@ public class CardMatchGamePlayManager : MonoBehaviour
     private void Awake()
     {
         _cardPair = null;
-        HasSave =  GetComponent<SaveLoadManager>().CheckSaveFile();
         Card.OnCardSelected += CardSelected;
+        CardOrganizer.OnSaveGame += SaveGame;
     }
 
     private void OnDestroy()
     {
         Card.OnCardSelected -= CardSelected;
+        CardOrganizer.OnSaveGame -= SaveGame;
     }
 
     public void Start()
     {
-        if (HasSave)
+        if (GetComponent<SaveLoadManager>().CheckSaveFile())
         {
             GetComponent<SaveLoadManager>().LoadSaveFile( (saveFile) =>
             {
+                Matches = saveFile.Matches;
+                Turns = saveFile.Turns;
+                Score = saveFile.Score;
+                Combo = saveFile.Combo;
+                OnUpdateInfoDisplay?.Invoke(Matches, Turns, Score, Combo);
                 OnLoadCards(saveFile);
             });
         }
@@ -50,6 +54,15 @@ public class CardMatchGamePlayManager : MonoBehaviour
         {
             SetupCards();
         }
+    }
+
+    public void SaveGame(SaveWrapper save)
+    {
+        save.Matches = Matches;
+        save.Turns = Turns;
+        save.Score = Score;
+        save.Combo = Combo;
+        StartCoroutine(GetComponent<SaveLoadManager>().SaveGameAsync(save));
     }
 
     public void SetupCards()

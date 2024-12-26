@@ -13,6 +13,11 @@ public class InfoDisplay : MonoBehaviour
         CardMatchGamePlayManager.OnUpdateInfoDisplay += UpdateInfoDisplay;
     }
 
+    public void OnDestroy()
+    {
+        CardMatchGamePlayManager.OnUpdateInfoDisplay -= UpdateInfoDisplay;
+    }
+
     private void UpdateInfoDisplay(int matches, int turns, int score, int combo)
     {
         Matches.text = "Matches: "+matches;
